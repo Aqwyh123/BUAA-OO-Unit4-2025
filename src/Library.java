@@ -1,5 +1,6 @@
 import com.oocourse.library1.LibraryBookId;
 import com.oocourse.library1.LibraryBookIsbn;
+import com.oocourse.library1.LibraryBookIsbn.Type;
 import com.oocourse.library1.LibraryMoveInfo;
 import com.oocourse.library1.LibraryTrace;
 
@@ -32,9 +33,10 @@ public class Library {
         for (LibraryBookIsbn bookIsbn : inventory.keySet()) {
             Set<LibraryBookId> bookIds = new HashSet<>();
             for (int i = 1; i <= inventory.get(bookIsbn); i++) {
+                Type bookType = bookIsbn.getType();
+                String bookUid = bookIsbn.getUid();
                 String copyId = i < 10 ? "0" + i : String.valueOf(i);
-                LibraryBookId bookId = new LibraryBookId(bookIsbn.getType(), bookIsbn.getUid(),
-                    copyId);
+                LibraryBookId bookId = new LibraryBookId(bookType, bookUid, copyId);
                 bookIds.add(bookId);
                 this.inventory.put(bookId, new Book(bookId));
             }

@@ -4,7 +4,6 @@ import com.oocourse.library1.LibraryTrace;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Book {
@@ -19,7 +18,7 @@ public class Book {
     }
 
     public List<LibraryTrace> getTrace() {
-        return Collections.unmodifiableList(trace);
+        return trace;
     }
 
     public void move(LocalDate date, LibraryBookState dest) {
