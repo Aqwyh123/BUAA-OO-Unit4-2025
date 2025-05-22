@@ -3017,18 +3017,6 @@
 									"_parent": {
 										"$ref": "AAAAAAGW84uieqiBb58="
 									},
-									"tags": [
-										{
-											"_type": "Tag",
-											"_id": "AAAAAAGW84uieqiEi2M=",
-											"_parent": {
-												"$ref": "AAAAAAGW84uieqiD93Y="
-											},
-											"name": "collection",
-											"kind": "string",
-											"value": "List"
-										}
-									],
 									"type": "List<LibraryMoveInfo>",
 									"direction": "return"
 								}
@@ -3057,18 +3045,6 @@
 									"_parent": {
 										"$ref": "AAAAAAGW84uieqiFGKw="
 									},
-									"tags": [
-										{
-											"_type": "Tag",
-											"_id": "AAAAAAGW84uieqiIt7w=",
-											"_parent": {
-												"$ref": "AAAAAAGW84uieqiHosw="
-											},
-											"name": "collection",
-											"kind": "string",
-											"value": "List"
-										}
-									],
 									"type": "List<LibraryMoveInfo>",
 									"direction": "return"
 								}
@@ -3097,18 +3073,6 @@
 									"_parent": {
 										"$ref": "AAAAAAGW84uieqiJaww="
 									},
-									"tags": [
-										{
-											"_type": "Tag",
-											"_id": "AAAAAAGW84uieqiMto4=",
-											"_parent": {
-												"$ref": "AAAAAAGW84uieqiLKOo="
-											},
-											"name": "collection",
-											"kind": "string",
-											"value": "List"
-										}
-									],
 									"type": "List<LibraryTrace>",
 									"direction": "return"
 								}
