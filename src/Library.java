@@ -129,7 +129,7 @@ public class Library {
     }
 
     public void returnBook(LocalDate date, LibraryBookId bookId, String userId) {
-        users.get(userId).returnBook(bookId);
+        users.get(userId).returnBook(bookId.getBookIsbn());
         inventory.get(bookId).move(date, BORROW_RETURN_OFFICE);
         borrowReturnOffice.get(bookId.getBookIsbn()).add(bookId);
     }
