@@ -5,6 +5,7 @@ import com.oocourse.library1.LibraryMoveInfo;
 import com.oocourse.library1.LibraryTrace;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,7 +23,7 @@ import static com.oocourse.library1.LibraryBookState.USER;
 public class Library {
     private final Map<LibraryBookId, Book> inventory = new HashMap<>();
     private final Map<LibraryBookIsbn, Set<LibraryBookId>> bookshelf = new HashMap<>();
-    private final Map<String, Pair<Integer, LibraryBookId>> appointmentOffice = new HashMap<>();
+    private final Map<String, Pair<LocalDate, LibraryBookId>> appointmentOffice = new HashMap<>();
     private final Map<LibraryBookIsbn, Set<LibraryBookId>> borrowReturnOffice = new HashMap<>();
     private final Map<String, User> users = new HashMap<>();
 
@@ -59,16 +60,14 @@ public class Library {
         Iterator<String> userIdIterator = appointmentOffice.keySet().iterator();
         while (userIdIterator.hasNext()) {
             String userId = userIdIterator.next();
-            Pair<Integer, LibraryBookId> pair = appointmentOffice.get(userId);
-            if (pair.getFirst() == 0) {
+            Pair<LocalDate, LibraryBookId> pair = appointmentOffice.get(userId);
+            if (ChronoUnit.DAYS.between(pair.getFirst(), date) >= 5) {
                 LibraryBookId bookId = pair.getSecond();
                 userIdIterator.remove();
                 appointments.remove(userId);
                 inventory.get(bookId).move(date, BOOKSHELF);
                 bookshelf.get(bookId.getBookIsbn()).add(bookId);
                 infos.add(new LibraryMoveInfo(bookId, APPOINTMENT_OFFICE, BOOKSHELF));
-            } else {
-                appointmentOffice.put(userId, new Pair<>(pair.getFirst() - 1, pair.getSecond()));
             }
         }
         return infos;
@@ -82,14 +81,14 @@ public class Library {
                 LibraryBookId bookId = borrowReturnOffice.get(bookIsbn).iterator().next();
                 borrowReturnOffice.get(bookIsbn).remove(bookId);
                 inventory.get(bookId).move(date, APPOINTMENT_OFFICE);
-                appointmentOffice.put(userId, new Pair<>(6, bookId));
+                appointmentOffice.put(userId, new Pair<>(date.plusDays(1), bookId));
                 infos.add(new LibraryMoveInfo(bookId, BORROW_RETURN_OFFICE, APPOINTMENT_OFFICE,
                     userId));
             } else if (!bookshelf.get(bookIsbn).isEmpty()) {
                 LibraryBookId bookId = bookshelf.get(bookIsbn).iterator().next();
                 bookshelf.get(bookIsbn).remove(bookId);
                 inventory.get(bookId).move(date, APPOINTMENT_OFFICE);
-                appointmentOffice.put(userId, new Pair<>(6, bookId));
+                appointmentOffice.put(userId, new Pair<>(date.plusDays(1), bookId));
                 infos.add(new LibraryMoveInfo(bookId, BOOKSHELF, APPOINTMENT_OFFICE, userId));
             }
         }

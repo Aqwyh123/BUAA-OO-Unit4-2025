@@ -682,7 +682,7 @@
 											"top": 183,
 											"width": 723.3968505859375,
 											"height": 14,
-											"text": "-appointmentOffice: Map<String, Pair<Integer, LibraryBookId>> {readOnly}",
+											"text": "-appointmentOffice: Map<String, Pair<LocalDate, LibraryBookId>> {readOnly}",
 											"horizontalAlignment": 0
 										},
 										{
@@ -2922,7 +2922,7 @@
 							"name": "appointmentOffice",
 							"visibility": "private",
 							"isLeaf": true,
-							"type": "Map<String, Pair<Integer, LibraryBookId>>",
+							"type": "Map<String, Pair<LocalDate, LibraryBookId>>",
 							"isReadOnly": true
 						},
 						{
