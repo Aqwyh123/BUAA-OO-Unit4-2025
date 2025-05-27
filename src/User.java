@@ -6,13 +6,32 @@ import java.util.Set;
 
 public class User {
     private final String id;
+    private boolean ordering;
     private boolean borrowedTypeB;
     private final Set<LibraryBookIsbn> borrowedTypeCs;
 
     public User(String id) {
         this.id = id;
+        this.ordering = false;
         this.borrowedTypeB = false;
         this.borrowedTypeCs = new HashSet<>();
+    }
+
+    public boolean canOrder(LibraryBookIsbn bookIsbn) {
+        return !ordering && canBorrow(bookIsbn);
+    }
+
+    public void beginOrder() {
+        ordering = true;
+    }
+
+    public void cancelOrder() {
+        ordering = false;
+    }
+
+    public void pickBook(LibraryBookIsbn bookIsbn) {
+        ordering = false;
+        borrowBook(bookIsbn);
     }
 
     public boolean canBorrow(LibraryBookIsbn bookIsbn) {

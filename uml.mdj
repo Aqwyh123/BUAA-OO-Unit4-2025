@@ -1093,6 +1093,24 @@
 										},
 										{
 											"_type": "UMLAttributeView",
+											"_id": "AAAAAAGXEjvV0X3BY9g=",
+											"_parent": {
+												"$ref": "AAAAAAGW84xpZarrw48="
+											},
+											"model": {
+												"$ref": "AAAAAAGXEjvVy32+q2U="
+											},
+											"font": "Source Code Pro;14;0",
+											"parentStyle": true,
+											"left": 485,
+											"top": 495,
+											"width": 580.5974731445312,
+											"height": 14,
+											"text": "-ordering: boolean",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLAttributeView",
 											"_id": "AAAAAAGW84xpZ6sOMbQ=",
 											"_parent": {
 												"$ref": "AAAAAAGW84xpZarrw48="
@@ -1103,7 +1121,7 @@
 											"font": "Source Code Pro;14;0",
 											"parentStyle": true,
 											"left": 485,
-											"top": 495,
+											"top": 511,
 											"width": 580.5974731445312,
 											"height": 14,
 											"text": "-borrowedTypeB: boolean",
@@ -1121,7 +1139,7 @@
 											"font": "Source Code Pro;14;0",
 											"parentStyle": true,
 											"left": 485,
-											"top": 511,
+											"top": 527,
 											"width": 580.5974731445312,
 											"height": 14,
 											"text": "-borrowedTypeCs: Set<LibraryBookIsbn> {readOnly}",
@@ -1133,7 +1151,7 @@
 									"left": 480,
 									"top": 474,
 									"width": 590.5974731445312,
-									"height": 56
+									"height": 72
 								},
 								{
 									"_type": "UMLOperationCompartmentView",
@@ -1157,10 +1175,82 @@
 											"font": "Source Code Pro;14;0",
 											"parentStyle": true,
 											"left": 485,
-											"top": 535,
+											"top": 551,
 											"width": 580.5974731445312,
 											"height": 14,
 											"text": "«constructor»+User(id: String)",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGXEj6hs4BHjN4=",
+											"_parent": {
+												"$ref": "AAAAAAGW84xpZarsmfI="
+											},
+											"model": {
+												"$ref": "AAAAAAGXEj6hrIBEG1o="
+											},
+											"font": "Source Code Pro;14;0",
+											"parentStyle": true,
+											"left": 485,
+											"top": 567,
+											"width": 580.5974731445312,
+											"height": 14,
+											"text": "+canOrder(bookIsbn: LibraryBookIsbn): boolean",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGXEkIjwoNC8gI=",
+											"_parent": {
+												"$ref": "AAAAAAGW84xpZarsmfI="
+											},
+											"model": {
+												"$ref": "AAAAAAGXEkIjvYM/1Kk="
+											},
+											"font": "Source Code Pro;14;0",
+											"parentStyle": true,
+											"left": 485,
+											"top": 583,
+											"width": 580.5974731445312,
+											"height": 14,
+											"text": "+beginOrder(): void",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGXEkLX1YUnx9s=",
+											"_parent": {
+												"$ref": "AAAAAAGW84xpZarsmfI="
+											},
+											"model": {
+												"$ref": "AAAAAAGXEkLX0oUivgk="
+											},
+											"font": "Source Code Pro;14;0",
+											"parentStyle": true,
+											"left": 485,
+											"top": 599,
+											"width": 580.5974731445312,
+											"height": 14,
+											"text": "+cancelOrder(): void",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGXEkNE1IZyH3o=",
+											"_parent": {
+												"$ref": "AAAAAAGW84xpZarsmfI="
+											},
+											"model": {
+												"$ref": "AAAAAAGXEkNEzoZvjXg="
+											},
+											"font": "Source Code Pro;14;0",
+											"parentStyle": true,
+											"left": 485,
+											"top": 615,
+											"width": 580.5974731445312,
+											"height": 14,
+											"text": "+pickBook(bookIsbn: LibraryBookIsbn): void",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1175,7 +1265,7 @@
 											"font": "Source Code Pro;14;0",
 											"parentStyle": true,
 											"left": 485,
-											"top": 551,
+											"top": 631,
 											"width": 580.5974731445312,
 											"height": 14,
 											"text": "+canBorrow(bookIsbn: LibraryBookIsbn): boolean",
@@ -1193,7 +1283,7 @@
 											"font": "Source Code Pro;14;0",
 											"parentStyle": true,
 											"left": 485,
-											"top": 567,
+											"top": 647,
 											"width": 580.5974731445312,
 											"height": 14,
 											"text": "+borrowBook(bookIsbn: LibraryBookIsbn): void",
@@ -1211,7 +1301,7 @@
 											"font": "Source Code Pro;14;0",
 											"parentStyle": true,
 											"left": 485,
-											"top": 583,
+											"top": 663,
 											"width": 580.5974731445312,
 											"height": 14,
 											"text": "+returnBook(bookIsbn: LibraryBookIsbn): void",
@@ -1221,9 +1311,9 @@
 									"font": "Source Code Pro;14;0",
 									"parentStyle": true,
 									"left": 480,
-									"top": 530,
+									"top": 546,
 									"width": 590.5974731445312,
-									"height": 72
+									"height": 136
 								},
 								{
 									"_type": "UMLReceptionCompartmentView",
@@ -1266,7 +1356,7 @@
 							"left": 480,
 							"top": 448,
 							"width": 589.5974731445312,
-							"height": 154,
+							"height": 234,
 							"nameCompartment": {
 								"$ref": "AAAAAAGW84xpZarmMho="
 							},
@@ -3468,6 +3558,16 @@
 						},
 						{
 							"_type": "UMLAttribute",
+							"_id": "AAAAAAGXEjvVy32+q2U=",
+							"_parent": {
+								"$ref": "AAAAAAGW84vQxapACYI="
+							},
+							"name": "ordering",
+							"visibility": "private",
+							"type": "boolean"
+						},
+						{
+							"_type": "UMLAttribute",
 							"_id": "AAAAAAGW84vQxapCmIw=",
 							"_parent": {
 								"$ref": "AAAAAAGW84vQxapACYI="
@@ -3507,6 +3607,100 @@
 									},
 									"name": "id",
 									"type": "String"
+								}
+							]
+						},
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAGXEj6hrIBEG1o=",
+							"_parent": {
+								"$ref": "AAAAAAGW84vQxapACYI="
+							},
+							"name": "canOrder",
+							"parameters": [
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGXEj9QNYEzJ6A=",
+									"_parent": {
+										"$ref": "AAAAAAGXEj6hrIBEG1o="
+									},
+									"name": "bookIsbn",
+									"type": "LibraryBookIsbn"
+								},
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGXEj8UcIC3HVw=",
+									"_parent": {
+										"$ref": "AAAAAAGXEj6hrIBEG1o="
+									},
+									"type": "boolean",
+									"direction": "return"
+								}
+							]
+						},
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAGXEkIjvYM/1Kk=",
+							"_parent": {
+								"$ref": "AAAAAAGW84vQxapACYI="
+							},
+							"name": "beginOrder",
+							"parameters": [
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGXEkJ+HYRmLbg=",
+									"_parent": {
+										"$ref": "AAAAAAGXEkIjvYM/1Kk="
+									},
+									"type": "void",
+									"direction": "return"
+								}
+							]
+						},
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAGXEkLX0oUivgk=",
+							"_parent": {
+								"$ref": "AAAAAAGW84vQxapACYI="
+							},
+							"name": "cancelOrder",
+							"parameters": [
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGXEkLX0oUjFlo=",
+									"_parent": {
+										"$ref": "AAAAAAGXEkLX0oUivgk="
+									},
+									"type": "void",
+									"direction": "return"
+								}
+							]
+						},
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAGXEkNEzoZvjXg=",
+							"_parent": {
+								"$ref": "AAAAAAGW84vQxapACYI="
+							},
+							"name": "pickBook",
+							"parameters": [
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGXEkN6XIc3dfo=",
+									"_parent": {
+										"$ref": "AAAAAAGXEkNEzoZvjXg="
+									},
+									"name": "bookIsbn",
+									"type": "LibraryBookIsbn"
+								},
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGXEkO2A4e/1Hk=",
+									"_parent": {
+										"$ref": "AAAAAAGXEkNEzoZvjXg="
+									},
+									"type": "void",
+									"direction": "return"
 								}
 							]
 						},

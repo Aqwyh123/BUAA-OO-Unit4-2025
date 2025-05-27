@@ -66,6 +66,7 @@ public class Library {
                 userIdIterator.remove();
                 inventory.get(bookId).move(date, BOOKSHELF);
                 bookshelf.get(bookId.getBookIsbn()).add(bookId);
+                users.get(userId).cancelOrder();
                 infos.add(new LibraryMoveInfo(bookId, APPOINTMENT_OFFICE, BOOKSHELF));
             }
         }
@@ -121,13 +122,12 @@ public class Library {
 
     public boolean orderBook(LibraryBookIsbn bookIsbn, String userId) {
         users.putIfAbsent(userId, new User(userId));
-        if (appointments.containsKey(userId)) {
+        if (!users.get(userId).canOrder(bookIsbn)) {
             return false;
-        } else if (users.get(userId).canBorrow(bookIsbn)) {
+        } else {
+            users.get(userId).beginOrder();
             appointments.put(userId, bookIsbn);
             return true;
-        } else {
-            return false;
         }
     }
 
@@ -148,7 +148,7 @@ public class Library {
             LibraryBookId bookId = appointmentOffice.get(userId).getSecond();
             appointmentOffice.remove(userId);
             inventory.get(bookId).move(date, USER);
-            users.get(userId).borrowBook(bookIsbn);
+            users.get(userId).pickBook(bookIsbn);
             return bookId;
         }
     }
