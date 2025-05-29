@@ -21,53 +21,61 @@ public class MainClass {
             if (command == null) {
                 break;
             }
-            LocalDate date = command.getDate();
-            if (command instanceof LibraryOpenCmd) {
-                PRINTER.move(date, library.open(date));
-            } else if (command instanceof LibraryCloseCmd) {
-                PRINTER.move(date, library.close(date));
-            } else if (command instanceof LibraryReqCmd) {
-                LibraryReqCmd req = (LibraryReqCmd) command;
-                Type type = req.getType();
-                LibraryBookIsbn bookIsbn = req.getBookIsbn();
-                LibraryBookId bookId;
-                String userId = req.getStudentId();
-                switch (type) {
-                    case QUERIED:
-                        bookId = req.getBookId();
-                        PRINTER.info(date, bookId, library.queryTrace(bookId));
-                        break;
-                    case BORROWED:
-                        LibraryBookId borrowedBookId = library.borrowBook(date, bookIsbn, userId);
-                        if (borrowedBookId != null) {
-                            PRINTER.accept(date, type, userId, borrowedBookId);
-                        } else {
-                            PRINTER.reject(date, type, userId, bookIsbn);
-                        }
-                        break;
-                    case ORDERED:
-                        boolean ordered = library.orderBook(bookIsbn, userId);
-                        if (ordered) {
-                            PRINTER.accept(date, type, userId, bookIsbn);
-                        } else {
-                            PRINTER.reject(date, type, userId, bookIsbn);
-                        }
-                        break;
-                    case RETURNED:
-                        bookId = req.getBookId();
-                        library.returnBook(date, bookId, userId);
-                        PRINTER.accept(date, type, userId, bookId);
-                        break;
-                    case PICKED:
-                        LibraryBookId pickedBookId = library.pickBook(date, bookIsbn, userId);
-                        if (pickedBookId != null) {
-                            PRINTER.accept(date, type, userId, pickedBookId);
-                        } else {
-                            PRINTER.reject(date, type, userId, bookIsbn);
-                        }
-                        break;
-                    default:
+            execute(library, command);
+        }
+    }
+
+    private static void execute(Library library, LibraryCommand command) {
+        LocalDate date = command.getDate();
+        if (command instanceof LibraryOpenCmd) {
+            PRINTER.move(date, library.open(date));
+        } else if (command instanceof LibraryCloseCmd) {
+            PRINTER.move(date, library.close(date));
+        } else if (command instanceof LibraryReqCmd) {
+            LibraryReqCmd req = (LibraryReqCmd) command;
+            Type type = req.getType();
+            LibraryBookIsbn bookIsbn = req.getBookIsbn();
+            LibraryBookId bookId;
+            String userId = req.getStudentId();
+            if (type == Type.QUERIED) {
+                bookId = req.getBookId();
+                PRINTER.info(date, bookId, library.queryTrace(bookId));
+            } else if (type == Type.BORROWED) {
+                LibraryBookId borrowedBookId = library.borrowBook(date, bookIsbn, userId);
+                if (borrowedBookId != null) {
+                    PRINTER.accept(date, type, userId, borrowedBookId);
+                } else {
+                    PRINTER.reject(date, type, userId, bookIsbn);
                 }
+            } else if (type == Type.ORDERED) {
+                boolean ordered = library.orderBook(bookIsbn, userId);
+                if (ordered) {
+                    PRINTER.accept(date, type, userId, bookIsbn);
+                } else {
+                    PRINTER.reject(date, type, userId, bookIsbn);
+                }
+            } else if (type == Type.RETURNED) {
+                bookId = req.getBookId();
+                library.returnBook(date, bookId, userId);
+                PRINTER.accept(date, type, userId, bookId);
+            } else if (type == Type.PICKED) {
+                LibraryBookId pickedBookId = library.pickBook(date, bookIsbn, userId);
+                if (pickedBookId != null) {
+                    PRINTER.accept(date, type, userId, pickedBookId);
+                } else {
+                    PRINTER.reject(date, type, userId, bookIsbn);
+                }
+            } else if (type == Type.READ) {
+                LibraryBookId readBookId = library.readBook(date, bookIsbn, userId);
+                if (readBookId != null) {
+                    PRINTER.accept(date, type, userId, readBookId);
+                } else {
+                    PRINTER.reject(date, type, userId, bookIsbn);
+                }
+            } else if (type == Type.RESTORED) {
+                bookId = req.getBookId();
+                library.restoreBook(date, bookId, userId);
+                PRINTER.accept(date, type, userId, bookId);
             }
         }
     }

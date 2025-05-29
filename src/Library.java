@@ -18,15 +18,20 @@ import java.util.Set;
 import static com.oocourse.library2.LibraryBookState.APPOINTMENT_OFFICE;
 import static com.oocourse.library2.LibraryBookState.BOOKSHELF;
 import static com.oocourse.library2.LibraryBookState.BORROW_RETURN_OFFICE;
+import static com.oocourse.library2.LibraryBookState.HOT_BOOKSHELF;
+import static com.oocourse.library2.LibraryBookState.READING_ROOM;
 import static com.oocourse.library2.LibraryBookState.USER;
 
 public class Library {
-    private final Map<LibraryBookId, Book> inventory = new HashMap<>();
+    private final Map<LibraryBookId, Book> books = new HashMap<>();
     private final Map<LibraryBookIsbn, Set<LibraryBookId>> bookshelf = new HashMap<>();
+    private final Map<LibraryBookIsbn, Set<LibraryBookId>> hotBookshelf = new HashMap<>();
+    private final Map<String, LibraryBookId> readingRoom = new HashMap<>();
     private final Map<String, Pair<LocalDate, LibraryBookId>> appointmentOffice = new HashMap<>();
     private final Map<LibraryBookIsbn, Set<LibraryBookId>> borrowReturnOffice = new HashMap<>();
     private final Map<String, User> users = new HashMap<>();
 
+    private final Set<LibraryBookIsbn> hotBooks = new HashSet<>();
     private final Map<String, LibraryBookIsbn> appointments = new HashMap<>();
 
     public Library(Map<LibraryBookIsbn, Integer> inventory) {
@@ -38,9 +43,10 @@ public class Library {
                 String copyId = i < 10 ? "0" + i : String.valueOf(i);
                 LibraryBookId bookId = new LibraryBookId(bookType, bookUid, copyId);
                 bookIds.add(bookId);
-                this.inventory.put(bookId, new Book(bookId));
+                books.put(bookId, new Book(bookId));
             }
             bookshelf.put(bookIsbn, bookIds);
+            hotBookshelf.put(bookIsbn, new HashSet<>());
             borrowReturnOffice.put(bookIsbn, new HashSet<>());
         }
     }
@@ -48,15 +54,19 @@ public class Library {
     public List<LibraryMoveInfo> open(LocalDate date) {
         List<LibraryMoveInfo> infos = new ArrayList<>();
         for (Set<LibraryBookId> bookIds : borrowReturnOffice.values()) {
-            Iterator<LibraryBookId> bookIditerator = bookIds.iterator();
-            while (bookIditerator.hasNext()) {
-                LibraryBookId bookId = bookIditerator.next();
-                bookIditerator.remove();
-                inventory.get(bookId).move(date, BOOKSHELF);
+            for (LibraryBookId bookId : bookIds) {
+                books.get(bookId).move(date, BOOKSHELF);
                 bookshelf.get(bookId.getBookIsbn()).add(bookId);
                 infos.add(new LibraryMoveInfo(bookId, BORROW_RETURN_OFFICE, BOOKSHELF));
             }
+            bookIds.clear();
         }
+        for (LibraryBookId bookId : readingRoom.values()) {
+            books.get(bookId).move(date, BOOKSHELF);
+            bookshelf.get(bookId.getBookIsbn()).add(bookId);
+            infos.add(new LibraryMoveInfo(bookId, READING_ROOM, BOOKSHELF));
+        }
+        readingRoom.clear();
         Iterator<String> userIdIterator = appointmentOffice.keySet().iterator();
         while (userIdIterator.hasNext()) {
             String userId = userIdIterator.next();
@@ -64,12 +74,37 @@ public class Library {
             if (ChronoUnit.DAYS.between(pair.getFirst(), date) >= 5) {
                 LibraryBookId bookId = pair.getSecond();
                 userIdIterator.remove();
-                inventory.get(bookId).move(date, BOOKSHELF);
+                books.get(bookId).move(date, BOOKSHELF);
                 bookshelf.get(bookId.getBookIsbn()).add(bookId);
                 users.get(userId).cancelOrder();
                 infos.add(new LibraryMoveInfo(bookId, APPOINTMENT_OFFICE, BOOKSHELF));
             }
         }
+        for (Set<LibraryBookId> bookIds : hotBookshelf.values()) {
+            Iterator<LibraryBookId> bookIdIterator = bookIds.iterator();
+            while (bookIdIterator.hasNext()) {
+                LibraryBookId bookId = bookIdIterator.next();
+                if (!hotBooks.contains(bookId.getBookIsbn())) {
+                    bookIdIterator.remove();
+                    books.get(bookId).move(date, BOOKSHELF);
+                    bookshelf.get(bookId.getBookIsbn()).add(bookId);
+                    infos.add(new LibraryMoveInfo(bookId, HOT_BOOKSHELF, BOOKSHELF));
+                }
+            }
+        }
+        for (Set<LibraryBookId> bookIds : bookshelf.values()) {
+            Iterator<LibraryBookId> bookIdIterator = bookIds.iterator();
+            while (bookIdIterator.hasNext()) {
+                LibraryBookId bookId = bookIdIterator.next();
+                if (hotBooks.contains(bookId.getBookIsbn())) {
+                    bookIdIterator.remove();
+                    hotBookshelf.get(bookId.getBookIsbn()).add(bookId);
+                    books.get(bookId).move(date, HOT_BOOKSHELF);
+                    infos.add(new LibraryMoveInfo(bookId, BOOKSHELF, HOT_BOOKSHELF));
+                }
+            }
+        }
+        hotBooks.clear();
         return infos;
     }
 
@@ -82,7 +117,7 @@ public class Library {
             if (!borrowReturnOffice.get(bookIsbn).isEmpty()) {
                 LibraryBookId bookId = borrowReturnOffice.get(bookIsbn).iterator().next();
                 borrowReturnOffice.get(bookIsbn).remove(bookId);
-                inventory.get(bookId).move(date, APPOINTMENT_OFFICE);
+                books.get(bookId).move(date, APPOINTMENT_OFFICE);
                 appointmentOffice.put(userId, new Pair<>(date.plusDays(1), bookId));
                 userIdIterator.remove();
                 infos.add(new LibraryMoveInfo(bookId, BORROW_RETURN_OFFICE, APPOINTMENT_OFFICE,
@@ -90,17 +125,38 @@ public class Library {
             } else if (!bookshelf.get(bookIsbn).isEmpty()) {
                 LibraryBookId bookId = bookshelf.get(bookIsbn).iterator().next();
                 bookshelf.get(bookIsbn).remove(bookId);
-                inventory.get(bookId).move(date, APPOINTMENT_OFFICE);
+                books.get(bookId).move(date, APPOINTMENT_OFFICE);
                 appointmentOffice.put(userId, new Pair<>(date.plusDays(1), bookId));
                 userIdIterator.remove();
                 infos.add(new LibraryMoveInfo(bookId, BOOKSHELF, APPOINTMENT_OFFICE, userId));
+            } else if (!hotBookshelf.get(bookIsbn).isEmpty()) {
+                LibraryBookId bookId = hotBookshelf.get(bookIsbn).iterator().next();
+                hotBookshelf.get(bookIsbn).remove(bookId);
+                books.get(bookId).move(date, APPOINTMENT_OFFICE);
+                appointmentOffice.put(userId, new Pair<>(date.plusDays(1), bookId));
+                userIdIterator.remove();
+                infos.add(new LibraryMoveInfo(bookId, HOT_BOOKSHELF, APPOINTMENT_OFFICE, userId));
+            } else {
+                Iterator<LibraryBookId> bookIdIterator = readingRoom.values().iterator();
+                while (bookIdIterator.hasNext()) {
+                    LibraryBookId bookId = bookIdIterator.next();
+                    if (bookId.getBookIsbn().equals(bookIsbn)) {
+                        bookIdIterator.remove();
+                        books.get(bookId).move(date, APPOINTMENT_OFFICE);
+                        appointmentOffice.put(userId, new Pair<>(date.plusDays(1), bookId));
+                        infos.add(new LibraryMoveInfo(bookId, READING_ROOM, APPOINTMENT_OFFICE,
+                            userId));
+                        userIdIterator.remove();
+                        break;
+                    }
+                }
             }
         }
         return infos;
     }
 
     public List<LibraryTrace> queryTrace(LibraryBookId bookId) {
-        return Collections.unmodifiableList(inventory.get(bookId).getTrace());
+        return Collections.unmodifiableList(books.get(bookId).getTrace());
     }
 
     public LibraryBookId borrowBook(LocalDate date, LibraryBookIsbn bookIsbn, String userId) {
@@ -111,8 +167,9 @@ public class Library {
             LibraryBookId bookId = bookshelf.get(bookIsbn).iterator().next();
             if (users.get(userId).canBorrow(bookIsbn)) {
                 bookshelf.get(bookIsbn).remove(bookId);
-                inventory.get(bookId).move(date, USER);
+                books.get(bookId).move(date, USER);
                 users.get(userId).borrowBook(bookIsbn);
+                hotBooks.add(bookId.getBookIsbn());
                 return bookId;
             } else {
                 return null;
@@ -133,7 +190,7 @@ public class Library {
 
     public void returnBook(LocalDate date, LibraryBookId bookId, String userId) {
         users.get(userId).returnBook(bookId.getBookIsbn());
-        inventory.get(bookId).move(date, BORROW_RETURN_OFFICE);
+        books.get(bookId).move(date, BORROW_RETURN_OFFICE);
         borrowReturnOffice.get(bookId.getBookIsbn()).add(bookId);
     }
 
@@ -147,9 +204,36 @@ public class Library {
         } else {
             LibraryBookId bookId = appointmentOffice.get(userId).getSecond();
             appointmentOffice.remove(userId);
-            inventory.get(bookId).move(date, USER);
+            books.get(bookId).move(date, USER);
             users.get(userId).pickBook(bookIsbn);
             return bookId;
         }
+    }
+
+    public LibraryBookId readBook(LocalDate date, LibraryBookIsbn bookIsbn, String userId) {
+        if (bookshelf.get(bookIsbn).isEmpty() && hotBookshelf.get(bookIsbn).isEmpty()) {
+            return null;
+        } else if (readingRoom.containsKey(userId)) {
+            return null;
+        } else {
+            LibraryBookId bookId;
+            if (!hotBookshelf.get(bookIsbn).isEmpty()) {
+                bookId = hotBookshelf.get(bookIsbn).iterator().next();
+                hotBookshelf.get(bookIsbn).remove(bookId);
+            } else {
+                bookId = bookshelf.get(bookIsbn).iterator().next();
+                bookshelf.get(bookIsbn).remove(bookId);
+            }
+            books.get(bookId).move(date, READING_ROOM);
+            readingRoom.put(userId, bookId);
+            hotBooks.add(bookId.getBookIsbn());
+            return bookId;
+        }
+    }
+
+    public void restoreBook(LocalDate date, LibraryBookId bookId, String userId) {
+        readingRoom.remove(userId);
+        books.get(bookId).move(date, BORROW_RETURN_OFFICE);
+        borrowReturnOffice.get(bookId.getBookIsbn()).add(bookId);
     }
 }
