@@ -163,7 +163,7 @@ public class Library {
         users.putIfAbsent(userId, new User(userId));
         if (bookshelf.get(bookIsbn).isEmpty() && hotBookshelf.get(bookIsbn).isEmpty()) {
             return null;
-        } else if (!users.get(userId).canBorrow(bookIsbn)){
+        } else if (!users.get(userId).canBorrow(bookIsbn)) {
             return null;
         } else {
             LibraryBookId bookId;
