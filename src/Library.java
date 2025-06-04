@@ -161,19 +161,23 @@ public class Library {
 
     public LibraryBookId borrowBook(LocalDate date, LibraryBookIsbn bookIsbn, String userId) {
         users.putIfAbsent(userId, new User(userId));
-        if (bookshelf.get(bookIsbn).isEmpty()) {
+        if (bookshelf.get(bookIsbn).isEmpty() && hotBookshelf.get(bookIsbn).isEmpty()) {
+            return null;
+        } else if (!users.get(userId).canBorrow(bookIsbn)){
             return null;
         } else {
-            LibraryBookId bookId = bookshelf.get(bookIsbn).iterator().next();
-            if (users.get(userId).canBorrow(bookIsbn)) {
-                bookshelf.get(bookIsbn).remove(bookId);
-                books.get(bookId).move(date, USER);
-                users.get(userId).borrowBook(bookIsbn);
-                hotBooks.add(bookId.getBookIsbn());
-                return bookId;
+            LibraryBookId bookId;
+            if (!hotBookshelf.get(bookIsbn).isEmpty()) {
+                bookId = hotBookshelf.get(bookIsbn).iterator().next();
+                hotBookshelf.get(bookIsbn).remove(bookId);
             } else {
-                return null;
+                bookId = bookshelf.get(bookIsbn).iterator().next();
+                bookshelf.get(bookIsbn).remove(bookId);
             }
+            books.get(bookId).move(date, USER);
+            users.get(userId).borrowBook(bookIsbn);
+            hotBooks.add(bookId.getBookIsbn());
+            return bookId;
         }
     }
 
