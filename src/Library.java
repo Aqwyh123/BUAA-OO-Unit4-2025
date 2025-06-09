@@ -90,7 +90,7 @@ public class Library {
         }
         hotBooks.clear();
         lastOpenDate = lastOpenDate == null ? date : lastOpenDate;
-        int passedDays = (int) ChronoUnit.DAYS.between(lastOpenDate, date) - 1;
+        int passedDays = (int) ChronoUnit.DAYS.between(lastOpenDate, date);
         if (passedDays > 0) {
             users.values().forEach(user -> user.checkReturn(date, passedDays));
         }
@@ -124,7 +124,6 @@ public class Library {
             }
             bookIds.clear();
         }
-        users.values().forEach(user -> user.checkReturn(date, 1));
         return infos;
     }
 
