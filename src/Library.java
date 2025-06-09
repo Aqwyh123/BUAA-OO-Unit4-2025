@@ -222,4 +222,10 @@ public class Library {
         books.get(bookId).move(date, BORROW_RETURN_OFFICE);
         borrowReturnOffice.get(bookId.getBookIsbn()).add(bookId);
     }
+
+    public void orderNewBook() {
+    }
+
+    public void getOrderedBook() {
+    }
 }

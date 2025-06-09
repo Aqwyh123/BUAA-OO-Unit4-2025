@@ -6,21 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class User {
-    public static final int INITIAL_CREDIT = 100;
-    public static final int MAX_CREDIT = 180;
-    public static final int MIN_CREDIT = 0;
-    public static final int MIN_CREDIT_FOR_READING_BC = 1;
-    public static final int MIN_CREDIT_FOR_READING_A = 40;
-    public static final int MIN_CREDIT_FOR_BORROWING = 60;
-    public static final int MIN_CREDIT_FOR_ORDERING = 100;
-    public static final int CREDIT_ADD_FOR_BORROWING = 10;
-    public static final int CREDIT_ADD_FOR_READING = 10;
-    public static final int CREDIT_DEDUCT_FOR_BORROWING = 5;
-    public static final int CREDIT_DEDUCT_FOR_ORDERING = 15;
-    public static final int CREDIT_DEDUCT_FOR_READING = 10;
-
     private final String id;
-    private int credit = INITIAL_CREDIT;
+    private int credit = 100;
     private final Map<LibraryBookIsbn, LocalDate> borrowedTypeB = new HashMap<>();
     private final Map<LibraryBookIsbn, LocalDate> borrowedTypeCs = new HashMap<>();
     private final Map<LibraryBookIsbn, LocalDate> ordered = new HashMap<>();
@@ -35,19 +22,19 @@ public class User {
     }
 
     private void addCredit(int amount) {
-        credit = Math.min(credit + amount, MAX_CREDIT);
+        credit = Math.min(credit + amount, 180);
     }
 
     private void reduceCredit(int amount) {
-        credit = Math.max(credit - amount, MIN_CREDIT);
+        credit = Math.max(credit - amount, 0);
     }
 
     public boolean canBorrow(LibraryBookIsbn bookIsbn) {
         switch (bookIsbn.getType()) {
             case B:
-                return borrowedTypeB.isEmpty() && credit >= MIN_CREDIT_FOR_BORROWING;
+                return borrowedTypeB.isEmpty() && credit >= 60;
             case C:
-                return !borrowedTypeCs.containsKey(bookIsbn) && credit >= MIN_CREDIT_FOR_BORROWING;
+                return !borrowedTypeCs.containsKey(bookIsbn) && credit >= 60;
             case A:
             default:
                 return false;
@@ -72,14 +59,14 @@ public class User {
             LocalDate borrowedDate = borrowedTypeB.get(bookIsbn);
             int daysOverdue = (int) ChronoUnit.DAYS.between(borrowedDate, date) - 30;
             if (daysOverdue > 0) {
-                reduceCredit(Math.min(daysOverdue, passedDays) * CREDIT_DEDUCT_FOR_BORROWING);
+                reduceCredit(Math.min(daysOverdue, passedDays) * 5);
             }
         }
         for (LibraryBookIsbn bookIsbn : borrowedTypeCs.keySet()) {
             LocalDate borrowedDate = borrowedTypeCs.get(bookIsbn);
             int daysOverdue = (int) ChronoUnit.DAYS.between(borrowedDate, date) - 60;
             if (daysOverdue > 0) {
-                reduceCredit(Math.min(daysOverdue, passedDays) * CREDIT_DEDUCT_FOR_BORROWING);
+                reduceCredit(Math.min(daysOverdue, passedDays) * 5);
             }
         }
     }
@@ -100,13 +87,13 @@ public class User {
                 throw new IllegalArgumentException("Cannot borrow/return book of type A!");
         }
         if (!isOverdue) {
-            addCredit(CREDIT_ADD_FOR_BORROWING);
+            addCredit(10);
         }
         return !isOverdue;
     }
 
     public boolean canOrder(LibraryBookIsbn bookIsbn) {
-        return ordered.isEmpty() && credit >= MIN_CREDIT_FOR_ORDERING && canBorrow(bookIsbn);
+        return ordered.isEmpty() && credit >= 100 && canBorrow(bookIsbn);
     }
 
     public void orderBook(LocalDate date, LibraryBookIsbn bookIsbn) {
@@ -115,7 +102,7 @@ public class User {
 
     public void notPick() {
         ordered.clear();
-        reduceCredit(CREDIT_DEDUCT_FOR_ORDERING);
+        reduceCredit(15);
     }
 
     public void pickBook(LocalDate date, LibraryBookIsbn bookIsbn) {
@@ -127,9 +114,9 @@ public class User {
         switch (bookIsbn.getType()) {
             case B:
             case C:
-                return read.isEmpty() && credit >= MIN_CREDIT_FOR_READING_BC;
+                return read.isEmpty() && credit >= 1;
             case A:
-                return read.isEmpty() && credit >= MIN_CREDIT_FOR_READING_A;
+                return read.isEmpty() && credit >= 40;
             default:
                 return false;
         }
@@ -141,11 +128,11 @@ public class User {
 
     public void notRestore() {
         read.clear();
-        reduceCredit(CREDIT_DEDUCT_FOR_READING);
+        reduceCredit(10);
     }
 
     public void restoreBook() {
         read.clear();
-        addCredit(CREDIT_ADD_FOR_READING);
+        addCredit(10);
     }
 }
