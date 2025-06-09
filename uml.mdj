@@ -1539,7 +1539,7 @@
 											"top": 879,
 											"width": 580.5974731445312,
 											"height": 14,
-											"text": "+pickBook(bookIsbn: LibraryBookIsbn): void",
+											"text": "+pickBook(date: LocalDate, bookIsbn: LibraryBookIsbn): void",
 											"horizontalAlignment": 0
 										},
 										{
@@ -4321,6 +4321,15 @@
 							},
 							"name": "pickBook",
 							"parameters": [
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGXVGQcdJQAPlk=",
+									"_parent": {
+										"$ref": "AAAAAAGXEkNEzoZvjXg="
+									},
+									"name": "date",
+									"type": "LocalDate"
+								},
 								{
 									"_type": "UMLParameter",
 									"_id": "AAAAAAGXEkN6XIc3dfo=",
